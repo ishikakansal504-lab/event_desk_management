@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Event Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;700&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><i></i>Event Desk</div>
+    <nav class="nav" aria-label="Pages">
+      <a href="#/" id="navPeople">People</a>
+      <a href="#/turns" id="navTurns">Turn order</a>
+    </nav>
+    <div class="actions">
+      <button class="btn primary" data-act="openImport">Add data</button>
+      <button class="btn" data-act="addPerson">Add person</button>
+      <button class="btn" data-act="manage">Manage events</button>
+    </div>
+  </header>
+  <div id="banner"></div>
+
+  <section id="pagePeople">
+    <div class="tabs" id="tabs" role="tablist" aria-label="Events"></div>
+    <div class="stats" id="stats"></div>
+    <div class="tools">
+      <label class="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="q" type="search" placeholder="Search name, college, event, email, phone, anything" autocomplete="off" aria-label="Search"></label>
+      <div class="seg" id="viewSeg" role="group" aria-label="Layout">
+        <button data-act="view" data-v="table" aria-pressed="true">One table</button>
+        <button data-act="view" data-v="split" aria-pressed="false">Came | Not yet</button>
+      </div>
+      <div class="popwrap">
+        <button class="btn" data-act="toggleCols" id="btnCols">Columns</button>
+        <div class="pop" id="colPop" hidden></div>
+      </div>
+      <button class="btn" data-act="exportXlsx">Download Excel</button>
+      <button class="btn" data-act="exportPdf">Download PDF</button>
+    </div>
+    <div class="chips" id="chips"></div>
+    <div id="results" aria-live="polite"></div>
+  </section>
+
+  <section id="pageTurns" hidden>
+    <div class="tabs" id="turnTabs" role="tablist" aria-label="Events"></div>
+    <div id="turnBody"></div>
+  </section>
+</div>
+<div id="modalRoot"></div>
+<div id="toastRoot"></div>
+<script src="/static/app.js"></script>
+</body>
+</html>
