@@ -17,7 +17,17 @@ BASE = os.path.dirname(os.path.abspath(__file__))
 
 def create_app(database_url=None):
     app = Flask(__name__, static_folder=os.path.join(BASE, "static"), static_url_path="/static")
-    url = database_url or os.environ.get("DATABASE_URL") or "sqlite:///" + os.path.join(BASE, "eventdesk.db")
+    url = database_url or os.environ.get("DATABASE_URL")
+
+    if not url:
+       if os.environ.get("RENDER"):
+          raise RuntimeError("DATABASE_URL must be configured on Render.")
+       url = "sqlite:///" + os.path.join(BASE, "eventdesk.db")
+
+    if url.startswith("postgres://"):
+        url = url.replace("postgres://", "postgresql+psycopg://", 1)
+    elif url.startswith("postgresql://"):
+        url = url.replace("postgresql://", "postgresql+psycopg://", 1)
     app.config["SQLALCHEMY_DATABASE_URI"] = url
     app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {"pool_pre_ping": True, "pool_recycle": 280}
     app.config["MAX_CONTENT_LENGTH"] = 25 * 1024 * 1024
@@ -27,14 +37,23 @@ def create_app(database_url=None):
 
     password = os.environ.get("APP_PASSWORD", "")
 
+    if os.environ.get("RENDER") and not password:
+        raise RuntimeError("APP_PASSWORD must be configured on Render.")
+
     @app.before_request
     def gate():
         if not password:
-            return None
+           return None
+
         a = request.authorization
         if a and a.password == password:
-            return None
-        return Response("Password needed", 401, {"WWW-Authenticate": 'Basic realm="Event Desk"'})
+           return None
+
+        return Response(
+            "Password needed",
+            401,
+            {"WWW-Authenticate": 'Basic realm="Event Desk"'}
+        )
 
     @app.errorhandler(Exception)
     def oops(e):
